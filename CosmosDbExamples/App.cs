@@ -2,28 +2,43 @@
 
 internal class App
 {
-    private readonly ToDoListService _todoListService;
+    private readonly OrderService _orderService;
+    private readonly ToDoItemService _toDoItemService;
 
-    public App(ToDoListService qnaService)
+    public App(OrderService qnaService, ToDoItemService toDoItemService)
     {
-        this._todoListService = qnaService;
+        this._orderService = qnaService;
+        this._toDoItemService = toDoItemService;
     }
 
     public async Task RunAsync(string[] args)
     {
-        string id = Guid.NewGuid().ToString();
-
-        ToDoItem item = new()
+        int id = DateTime.Now.Microsecond;
+        Order item = new()
         {
             Id = id,
-            Content = "Content " + id.ToString()
+            ShippingAddress = new StreetAddress { City = "London", Street = "221 B Baker St" },
+            PartitionKey = id.ToString()
         };
 
-        await _todoListService.AddToDoItemAsync(item);
+        await _orderService.AddItemAsync(item);
 
-        ToDoItem? qnaInDb = await _todoListService.GetToDoItemByIdAsync(item.Id);
+        Order? itemInDb = await _orderService.GetFirstItemAsync();
 
-        Console.WriteLine(qnaInDb?.Content);
-        Console.WriteLine("==========");
+        Console.WriteLine("Order Id:" + itemInDb?.Id);
+        Console.WriteLine("====================");
+
+
+        ToDoItem toDoItem = new()
+        {
+            Id = Guid.NewGuid().ToString(),
+            Content = "Content " + Guid.NewGuid().ToString()
+        };
+
+        await this._toDoItemService.AddItemAsync(toDoItem);
+
+        ToDoItem toDoItemInDb = await this._toDoItemService.GetFirstItemAsync();
+
+        Console.WriteLine(toDoItemInDb?.Id);
     }
 }

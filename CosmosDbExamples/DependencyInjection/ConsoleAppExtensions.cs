@@ -28,8 +28,9 @@ public static class ConsoleAppExtensions
 
     static IServiceCollection AddServices(this IServiceCollection services)
     {
-        services.AddSingleton<IToDoListDbContextFactory, ToDoListDbContextFactory>();
-        services.AddSingleton<ToDoListService>();
+        services.AddSingleton<IToDoItemDbContextFactory, ToDoItemDbContextFactory>();
+        services.AddSingleton<ToDoItemService>();
+        services.AddSingleton<OrderService>();
 
         return services;
     }
